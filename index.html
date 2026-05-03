@@ -459,6 +459,7 @@
           <a href="https://github.com/ravikiranrachakonda" class="btn btn-ghost" target="_blank">GitHub</a>
           <a href="mailto:ravikiran2508@gmail.com" class="btn btn-ghost">Email</a>
           <a href="RaviRachakonda_Resume.pdf" class="btn btn-ghost" download>↓ Resume</a>
+          <a href="#terminal" class="btn btn-ghost" onclick="document.getElementById('term-input').focus()">⌘ Interact</a>
         </div>
       </div>
       <div class="hero-right">
@@ -697,9 +698,219 @@
     </div>
   </section>
 
+  <!-- Terminal -->
+  <section id="terminal" style="max-width:1100px;margin:0 auto;padding:4rem 3rem;">
+    <div class="section-label">Interactive</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;font-family:var(--sans);">Here is a fun way to interact: Select an option or type a number.</p>
+    <div id="term-wrap" style="background:#1a1816;border-radius:6px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);border:1px solid var(--border);">
+      <!-- Title bar -->
+      <div style="background:#2e2a26;padding:10px 16px;display:flex;align-items:center;gap:8px;">
+        <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;background:#28c840;display:inline-block;"></span>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b6760;margin-left:8px;">ravi@portfolio ~ %</span>
+      </div>
+      <!-- Output -->
+      <div id="term-output" style="padding:20px 24px;min-height:280px;max-height:420px;overflow-y:auto;font-family:'DM Mono',monospace;font-size:13px;line-height:1.8;color:#e8e4dc;"></div>
+      <!-- Input row -->
+      <div style="display:flex;align-items:center;padding:10px 24px 16px;border-top:1px solid #2e2a26;">
+        <span style="color:#a0782a;font-family:'DM Mono',monospace;font-size:13px;margin-right:8px;">›</span>
+        <input id="term-input" type="text" autocomplete="off" spellcheck="false"
+          style="flex:1;background:transparent;border:none;outline:none;color:#e8e4dc;font-family:'DM Mono',monospace;font-size:13px;caret-color:#a0782a;"
+          placeholder="type a number or command..." />
+      </div>
+    </div>
+  </section>
+
   <footer>
     <p>© 2026 Ravi Rachakonda · San Jose, CA</p>
   </footer>
 
-</body>
-</html>
+<script>
+const output = document.getElementById('term-output');
+const input = document.getElementById('term-input');
+
+const GOLD = '#c8a96e';
+const MUTED = '#6b6760';
+const WHITE = '#e8e4dc';
+const GREEN = '#28c840';
+
+const experiences = [
+  {
+    id: 1,
+    short: "Sr. ML Engineer, AGI Data Scaling — Amazon AGI (Jan 2026–Present)",
+    detail: [
+      "Cross-org tech lead setting data infrastructure strategy for Amazon Nova foundation models and the Nova Forge platform.",
+      "Architected the standard data preparation platform (Nova Forge SDK) for foundation model customization — adopted across 100+ internal and enterprise teams.",
+      "Leading strategic migration of customers from manual data prep to Nova Forge's managed platform.",
+      "Serving as technical bridge between enterprise customers and internal platform teams.",
+    ]
+  },
+  {
+    id: 2,
+    short: "Sr. Research Engineer, Nova Pre & Post Training — Amazon AGI (2024–Jan 2026)",
+    detail: [
+      "Cross-org technical lead across pre-training, data infrastructure, and evaluations orgs for Amazon Nova.",
+      "Led org-wide multimodal (vision) pre-training strategy — defined training protocols adopted org-wide.",
+      "Drove org-wide adoption of NVIDIA NeMo 2.0, MegatronCore, and MegatronEnergon — without direct authority.",
+      "Reduced training cluster MTTR by 13x (40 min → 3 min) by redesigning Energon dataloader.",
+      "Designed real-time Avatar demo at AWS re:Invent 2024 using NVIDIA Triton Inference Server.",
+    ]
+  },
+  {
+    id: 3,
+    short: "Sr. SWE / Tech Lead, FireTV Background & Creative AI — Amazon (2022–2024)",
+    detail: [
+      "Founded the Image Generation initiative across two org boundaries (Alexa AI + FireTV).",
+      "Delivered the model productized as Amazon Bedrock's Titan Image Generation (Nova) — 1M+ images/month in production.",
+      "Founded Creative AI for Amazon Kids — ranked top 3 among all Amazon Kids Alexa skills at launch.",
+      "Defined end-to-end MLOps pipeline (CodeCommit, ECR, S3, SageMaker) with fully automated CI/CD.",
+    ]
+  },
+  {
+    id: 4,
+    short: "Sr. SWE / Tech Lead, Alexa Astro — Amazon Lab126 (2018–2021)",
+    detail: [
+      "Founded and led the Personality program for Amazon Astro — Amazon's first consumer home robot.",
+      "Defined technical vision for expressive robot behavior; shipped to initial customers.",
+      "Set architecture patterns adopted across the entire Astro org.",
+    ]
+  },
+  {
+    id: 5,
+    short: "SDE / Tech Lead, Alexa Platform — Amazon Lab126 (2012–2018)",
+    detail: [
+      "Founding engineer on Amazon Alexa — one of the earliest engineers on the platform.",
+      "Tech lead for Echo Spatial Perception, Notifications, Movies & Showtimes, Local Search, Sports Q&A.",
+      "Scaled Alexa platform to 10,000+ TPS at 99.9% availability for millions of users worldwide.",
+      "Co-authored 3 granted US patents including Echo Spatial Perception.",
+    ]
+  },
+  {
+    id: 6,
+    short: "Software Development Engineer — Amazon.com, Bangalore (2009–2012)",
+    detail: [
+      "Built core Amazon Prime data processing pipeline.",
+      "Contributed to international Prime launches: Amazon Prime Spain, Amazon Mom Spain, Prime Student Germany.",
+    ]
+  },
+];
+
+let state = 'main';
+let prevState = null;
+
+function print(html, marginTop) {
+  const div = document.createElement('div');
+  if (marginTop) div.style.marginTop = marginTop;
+  div.innerHTML = html;
+  output.appendChild(div);
+  output.scrollTop = output.scrollHeight;
+}
+
+function line(text, color) {
+  return `<span style="color:${color||WHITE}">${text}</span>`;
+}
+
+function printMainMenu() {
+  print(`<br><span style="color:${GOLD};font-weight:bold;">Hi! I'm Ravi's portfolio terminal.</span>`);
+  print(`<span style="color:${MUTED}">What would you like to explore?</span><br>`);
+  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">1</span>  Experience</span>`);
+  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">2</span>  Phone</span>`);
+  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">3</span>  Email</span>`);
+  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">4</span>  Skills</span>`);
+  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">5</span>  Patents</span>`);
+  print(`<br><span style="color:${MUTED}">Type a number or click an option above.</span>`);
+  state = 'main';
+}
+
+function printExperienceMenu() {
+  print(`<br><span style="color:${GOLD};font-weight:bold;">Experience</span> <span style="color:${MUTED}">— choose a role to learn more:</span><br>`);
+  experiences.forEach(exp => {
+    print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">${exp.id}</span>  ${exp.short}</span>`);
+  });
+  print(`<br><span style="color:${MUTED}">  <span style="color:${GOLD}">0</span>  ← Back to main menu</span>`);
+  state = 'experience';
+}
+
+function printExperienceDetail(id) {
+  const exp = experiences.find(e => e.id === id);
+  if (!exp) { print(`<span style="color:#ff5f57">Not found. Try again.</span>`); return; }
+  print(`<br><span style="color:${GOLD};font-weight:bold;">${exp.short}</span><br>`);
+  exp.detail.forEach(d => {
+    print(`<span style="color:${WHITE}">  • ${d}</span>`);
+  });
+  print(`<br><span style="color:${MUTED}">  <span style="color:${GOLD}">0</span>  ← Back to experience list &nbsp;|&nbsp; <span style="color:${GOLD}">m</span>  ← Main menu</span>`);
+  state = 'exp_detail';
+  prevState = 'experience';
+}
+
+function handleInput(val) {
+  val = val.trim().toLowerCase();
+  if (!val) return;
+  print(`<span style="color:${MUTED}">› ${val}</span>`);
+
+  if (val === 'm' || val === 'menu' || val === 'main') { printMainMenu(); return; }
+  if (val === 'clear' || val === 'cls') { output.innerHTML = ''; printMainMenu(); return; }
+
+  if (state === 'main') {
+    if (val === '1') { printExperienceMenu(); }
+    else if (val === '2') { print(`<br><span style="color:${WHITE}">📞 <a href="tel:+19046100261" style="color:${GOLD}">+1 (904) 610-0261</a></span>`); print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`); state = 'leaf'; }
+    else if (val === '3') { print(`<br><span style="color:${WHITE}">✉️ <a href="mailto:ravikiran2508@gmail.com" style="color:${GOLD}">ravikiran2508@gmail.com</a></span>`); print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`); state = 'leaf'; }
+    else if (val === '4') {
+      print(`<br><span style="color:${GOLD};font-weight:bold;">Skills</span><br>`);
+      const skills = [
+        ['ML & AI', 'PyTorch, NVIDIA NeMo 2.0, MegatronCore, Triton Inference Server, Diffusion Transformers, Multimodal LLMs'],
+        ['Distributed', 'Ray, Apache Spark, SageMaker HyperPod, AWS Batch, Distributed Training'],
+        ['Cloud & MLOps', 'SageMaker, ECR, S3, Lambda, DynamoDB, EC2, CI/CD'],
+        ['Languages', 'Python, Java, JavaScript, C++, Shell'],
+      ];
+      skills.forEach(([label, val]) => {
+        print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">${label}</span>  ${val}</span>`);
+      });
+      print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`);
+      state = 'leaf';
+    }
+    else if (val === '5') {
+      print(`<br><span style="color:${GOLD};font-weight:bold;">Patents</span><br>`);
+      print(`<span style="color:${WHITE}">  • Context-Based Device Arbitration — #10546583 | #11289087 (March 2022)</span>`);
+      print(`<span style="color:${WHITE}">  • Device Selection from Audio Data — #10685669 (June 2020)</span>`);
+      print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`);
+      state = 'leaf';
+    }
+    else { print(`<span style="color:#ff5f57">Unknown option "${val}". Type 1–5.</span>`); }
+  }
+  else if (state === 'experience') {
+    if (val === '0') { printMainMenu(); }
+    else {
+      const id = parseInt(val);
+      if (id >= 1 && id <= 6) { printExperienceDetail(id); }
+      else { print(`<span style="color:#ff5f57">Type 1–6 to pick a role, or 0 to go back.</span>`); }
+    }
+  }
+  else if (state === 'exp_detail') {
+    if (val === '0') { printExperienceMenu(); }
+    else if (val === 'm') { printMainMenu(); }
+    else { print(`<span style="color:#ff5f57">Type 0 to go back, or m for main menu.</span>`); }
+  }
+  else if (state === 'leaf') {
+    if (val === '0') { printMainMenu(); }
+    else { printMainMenu(); }
+  }
+}
+
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const val = input.value;
+    input.value = '';
+    handleInput(val);
+  }
+});
+
+// Click anywhere in terminal to focus input
+document.getElementById('term-wrap').addEventListener('click', () => input.focus());
+
+// Boot
+printMainMenu();
+input.focus();
+</script>
+
