@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ravi Rachakonda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --border: #1e1e1e;
+      --text: #e8e4dc;
+      --muted: #6b6760;
+      --accent: #c8a96e;
+      --accent-dim: rgba(200, 169, 110, 0.12);
+      --mono: 'DM Mono', monospace;
+      --serif: 'DM Serif Display', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* Nav */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 3rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 3rem 4rem;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-left { display: flex; flex-direction: column; justify-content: center; }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.1s forwards;
+    }
+
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 5vw, 5rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 480px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.3s forwards;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.4s forwards;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      padding: 0.65rem 1.4rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0a;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover { background: #d4b87a; }
+
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1px;
+      opacity: 0;
+      animation: fadeIn 0.8s 0.5s forwards;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 1.25rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-row:first-child { border-top: 1px solid var(--border); }
+
+    .stat-num {
+      font-family: var(--serif);
+      font-size: 2.5rem;
+      color: var(--accent);
+      min-width: 80px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+    }
+
+    /* Sections */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Experience */
+    .exp-list { display: flex; flex-direction: column; gap: 0; }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .exp-item:last-child { border-bottom: none; }
+
+    .exp-meta { padding-top: 2px; }
+
+    .exp-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    .exp-company {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .exp-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .exp-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .exp-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 1px;
+    }
+
+    /* Patents */
+    .patent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
+
+    .patent-card {
+      background: var(--bg);
+      padding: 2rem;
+      transition: background 0.2s;
+    }
+
+    .patent-card:hover { background: var(--surface); }
+
+    .patent-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .patent-title {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .patent-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Skills */
+    .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+
+    .skill-group-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .skill-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .skill-pill {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 5px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 1px;
+    }
+
+    /* Contact */
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .contact-desc {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .contact-link:hover { border-color: var(--accent); color: var(--text); }
+
+    .contact-link-label { font-size: 11px; color: var(--accent); letter-spacing: 0.06em; display: block; margin-bottom: 2px; text-transform: uppercase; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 3rem;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+      section { padding: 4rem 1.5rem; }
+      .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+      .patent-grid { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .contact-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">rr /</a>
+    <ul class="nav-links">
+      <li><a href="#experience">experience</a></li>
+      <li><a href="#patents">patents</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <p class="hero-tag">// Staff Machine Learning Engineer</p>
+        <h1 class="hero-name">Ravi<br><em>Rachakonda</em></h1>
+        <p class="hero-desc">
+          17+ years building systems at scale — from founding Amazon Alexa to leading data infrastructure for Amazon Nova foundation models. I work at the intersection of ML research, distributed systems, and org-wide technical strategy.
+        </p>
+        <div class="hero-links">
+          <a href="https://linkedin.com/in/ravi-rachakonda-91a56024" class="btn btn-primary" target="_blank">LinkedIn</a>
+          <a href="https://github.com/ravikiran2508" class="btn btn-ghost" target="_blank">GitHub</a>
+          <a href="mailto:ravikiran2508@gmail.com" class="btn btn-ghost">Email</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="stat-row">
+          <div class="stat-num">17+</div>
+          <div class="stat-label">years building<br>AI systems at Amazon</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">3</div>
+          <div class="stat-label">granted US patents<br>including Echo Spatial Perception</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">4+</div>
+          <div class="stat-label">orgs aligned as<br>cross-org tech lead</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-num">0→1</div>
+          <div class="stat-label">founder on Alexa, Astro Personality,<br>Image Gen & Creative AI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Experience -->
+  <section id="experience">
+    <div class="section-label">Experience</div>
+    <div class="exp-list">
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">Jan 2026 – Present</div>
+          <div class="exp-company">Amazon AGI</div>
+        </div>
+        <div>
+          <div class="exp-title">Senior ML Engineer, AGI Data Scaling</div>
+          <div class="exp-desc">Cross-org tech lead setting data infrastructure strategy for Amazon Nova foundation models and the Nova Forge platform — the standard data preparation platform for foundation model customization across internal and enterprise teams.</div>
+          <div class="exp-tags">
+            <span class="tag">Nova Forge SDK</span>
+            <span class="tag">Ray on HyperPod</span>
+            <span class="tag">Foundation Models</span>
+            <span class="tag">Data Infrastructure</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">2024 – Jan 2026</div>
+          <div class="exp-company">Amazon AGI</div>
+        </div>
+        <div>
+          <div class="exp-title">Senior Research Engineer, Nova Pre & Post Training</div>
+          <div class="exp-desc">Cross-org technical lead across pre-training, data infrastructure, and evaluations orgs for Amazon Nova — Amazon's flagship family of foundation models. Drove org-wide adoption of NVIDIA NeMo 2.0, MegatronCore, and MegatronEnergon.</div>
+          <div class="exp-tags">
+            <span class="tag">NeMo 2.0</span>
+            <span class="tag">MegatronCore</span>
+            <span class="tag">Multimodal LLMs</span>
+            <span class="tag">Diffusion Transformers</span>
+            <span class="tag">Triton Inference</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">2022 – 2024</div>
+          <div class="exp-company">Amazon</div>
+        </div>
+        <div>
+          <div class="exp-title">Senior SWE / Tech Lead, FireTV Background & Creative AI</div>
+          <div class="exp-desc">Founded the Image Generation initiative across two org boundaries. Delivered the model productized as Amazon Bedrock's Titan Image Generation (Nova) — now in production. Founded Creative AI for Amazon Kids, ranked top 3 at launch.</div>
+          <div class="exp-tags">
+            <span class="tag">Image Generation</span>
+            <span class="tag">Amazon Bedrock</span>
+            <span class="tag">SageMaker</span>
+            <span class="tag">MLOps</span>
+            <span class="tag">CI/CD</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">2018 – 2021</div>
+          <div class="exp-company">Amazon Lab126</div>
+        </div>
+        <div>
+          <div class="exp-title">Senior SWE / Tech Lead, Alexa Astro</div>
+          <div class="exp-desc">Founded and led the Personality program for Amazon Astro — Amazon's first consumer home robot — defining the technical vision for expressive robot behavior from the ground up and shipping to initial customers.</div>
+          <div class="exp-tags">
+            <span class="tag">Robotics</span>
+            <span class="tag">Personality AI</span>
+            <span class="tag">0→1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">2012 – 2018</div>
+          <div class="exp-company">Amazon Lab126</div>
+        </div>
+        <div>
+          <div class="exp-title">SDE / Tech Lead, Alexa Platform</div>
+          <div class="exp-desc">Founding engineer on Amazon Alexa. Tech lead across Weather, Sports, Movies, Notifications, and Echo Spatial Perception verticals. Built and scaled platform services to 10,000+ TPS at 99.9% availability for millions of users worldwide.</div>
+          <div class="exp-tags">
+            <span class="tag">Alexa</span>
+            <span class="tag">Voice AI</span>
+            <span class="tag">Distributed Systems</span>
+            <span class="tag">Patents</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">2009 – 2012</div>
+          <div class="exp-company">Amazon.com</div>
+        </div>
+        <div>
+          <div class="exp-title">Software Development Engineer</div>
+          <div class="exp-desc">Built core Amazon Prime data processing pipelines and contributed to international Prime launches across Spain and Germany.</div>
+          <div class="exp-tags">
+            <span class="tag">Amazon Prime</span>
+            <span class="tag">Data Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Patents -->
+  <section id="patents">
+    <div class="section-label">Patents</div>
+    <div class="patent-grid">
+      <div class="patent-card">
+        <div class="patent-num">#10546583</div>
+        <div class="patent-title">Context-Based Device Arbitration</div>
+        <div class="patent-date">Awarded March 2022</div>
+      </div>
+      <div class="patent-card">
+        <div class="patent-num">#11289087</div>
+        <div class="patent-title">Context-Based Device Arbitration</div>
+        <div class="patent-date">Awarded March 2022</div>
+      </div>
+      <div class="patent-card">
+        <div class="patent-num">#10685669</div>
+        <div class="patent-title">Device Selection from Audio Data</div>
+        <div class="patent-date">Awarded June 2020</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="section-label">Skills</div>
+    <div class="skills-grid">
+      <div>
+        <div class="skill-group-title">ML & AI</div>
+        <div class="skill-pills">
+          <span class="skill-pill">PyTorch</span>
+          <span class="skill-pill">NVIDIA NeMo 2.0</span>
+          <span class="skill-pill">MegatronCore</span>
+          <span class="skill-pill">MegatronLM</span>
+          <span class="skill-pill">Triton Inference Server</span>
+          <span class="skill-pill">Diffusion Transformers</span>
+          <span class="skill-pill">Multimodal LLMs</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Distributed & MLOps</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Ray</span>
+          <span class="skill-pill">Apache Spark</span>
+          <span class="skill-pill">SageMaker HyperPod</span>
+          <span class="skill-pill">AWS Batch</span>
+          <span class="skill-pill">Distributed Training</span>
+          <span class="skill-pill">Fault-Tolerant Pipelines</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Cloud & Infrastructure</div>
+        <div class="skill-pills">
+          <span class="skill-pill">SageMaker</span>
+          <span class="skill-pill">ECR</span>
+          <span class="skill-pill">S3</span>
+          <span class="skill-pill">Lambda</span>
+          <span class="skill-pill">DynamoDB</span>
+          <span class="skill-pill">EC2</span>
+          <span class="skill-pill">CloudWatch</span>
+          <span class="skill-pill">CI/CD</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Languages</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Python</span>
+          <span class="skill-pill">Java</span>
+          <span class="skill-pill">JavaScript</span>
+          <span class="skill-pill">C++</span>
+          <span class="skill-pill">Shell</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="section-label">Contact</div>
+    <div class="contact-wrap">
+      <div>
+        <h2 class="section-title">Let's connect.</h2>
+        <p class="contact-desc">Open to conversations about ML infrastructure, foundation model systems, and interesting technical problems at scale.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:ravikiran2508@gmail.com" class="contact-link">
+          <div>
+            <span class="contact-link-label">Email</span>
+            ravikiran2508@gmail.com
+          </div>
+        </a>
+        <a href="https://linkedin.com/in/ravi-rachakonda-91a56024" class="contact-link" target="_blank">
+          <div>
+            <span class="contact-link-label">LinkedIn</span>
+            ravi-rachakonda-91a56024
+          </div>
+        </a>
+        <a href="https://github.com/ravikiran2508" class="contact-link" target="_blank">
+          <div>
+            <span class="contact-link-label">GitHub</span>
+            github.com/ravikiran2508
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Ravi Rachakonda · San Jose, CA</p>
+  </footer>
+
+</body>
+</html>
