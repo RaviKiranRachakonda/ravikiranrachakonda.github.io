@@ -35,27 +35,52 @@ CONTACT: email: ${PROFILE.email} | phone: ${PROFILE.phone} | linkedin: ${PROFILE
   }
 
   function renderMarkdown(text) {
+    // Split into blocks by double newline first
+    const blocks = text.split(/\n\n+/);
+
+    const rendered = blocks.map(block => {
+      const trimmed = block.trim();
+      if (!trimmed) return '';
+
+      // Numbered list block
+      if (/^\d+\.\s/.test(trimmed)) {
+        const items = trimmed.split(/\n/).map(line =>
+          `<li>${inlineFormat(line.replace(/^\d+\.\s+/, ''))}</li>`
+        ).join('');
+        return `<ol style="margin:6px 0;padding-left:20px;">${items}</ol>`;
+      }
+
+      // Bullet list block
+      if (/^[•\-\*]\s/.test(trimmed)) {
+        const items = trimmed.split(/\n/).map(line =>
+          `<li>${inlineFormat(line.replace(/^[•\-\*]\s+/, ''))}</li>`
+        ).join('');
+        return `<ul style="margin:6px 0;padding-left:18px;">${items}</ul>`;
+      }
+
+      // Regular paragraph — handle single newlines as <br>
+      const lines = trimmed.split('\n').map(inlineFormat).join('<br>');
+      return `<p style="margin:0 0 6px 0;">${lines}</p>`;
+    });
+
+    return rendered.join('');
+  }
+
+  function inlineFormat(text) {
     return text
-      // Bold
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Bold headings like **Title:** → styled heading
+      .replace(/\*\*([^*]+):\*\*/g,
+        '<strong style="display:block;margin-top:8px;margin-bottom:2px;color:#1a1816;">$1:</strong>')
+      // Regular bold
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       // Italic
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      // Code inline
-      .replace(/`([^`]+)`/g, '<code style="background:#e8e4dc;padding:1px 5px;border-radius:3px;font-size:12px;font-family:\'DM Mono\',monospace;">$1</code>')
-      // Numbered lists — match lines starting with "1. " etc
-      .replace(/^\d+\.\s+(.*)$/gm, '<li style="margin:3px 0;">$1</li>')
-      // Bullet lists — •, -, *
-      .replace(/^[•\-\*]\s+(.*)$/gm, '<li style="margin:3px 0;">$1</li>')
-      // Wrap consecutive <li> items in <ul>
-      .replace(/(<li[^>]*>.*<\/li>\n?)+/g, m =>
-        `<ul style="margin:6px 0;padding-left:18px;">${m}</ul>`)
-      // Line breaks — double newline = paragraph break
-      .replace(/\n\n/g, '</p><p style="margin:6px 0;">')
-      // Single newline = <br>
-      .replace(/\n/g, '<br>')
-      // Wrap in paragraph if not already wrapped
-      .replace(/^(?!<)/, '<p style="margin:0">')
-      .replace(/(?<!>)$/, '</p>');
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      // Inline code
+      .replace(/`([^`]+)`/g,
+        '<code style="background:#e8e4dc;padding:1px 5px;border-radius:3px;font-size:12px;font-family:\'DM Mono\',monospace;">$1</code>')
+      // URLs — make clickable
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" style="color:#a0782a;text-decoration:underline;">$1</a>');
   }
 
   function appendMessage(role, text) {

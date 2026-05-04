@@ -6,7 +6,7 @@
  */
 
 const CONFIG = {
-  API_ENDPOINT: "https://bomamgy5h1.execute-api.us-east-1.amazonaws.com/prod/chat",
+  API_ENDPOINT: "https://YOUR_API_GATEWAY_ID.execute-api.us-east-1.amazonaws.com/prod/chat",
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -298,10 +298,9 @@ function initFullArchGraph(c) {
 function initSecurityGraph(c) {
   makeDraggableGraph(c,{
     nodes:{
-      l1:        {x:20, y:110,w:150,h:50,label:"CORS policy",    sub:"Layer 1 · browser",  fill:"#E6F1FB",stroke:"#185FA5",tc:"#0C447C",fs:"12"},
-      l2:        {x:20, y:168,w:150,h:50,label:"Resource policy",sub:"Layer 2 · AWS-level", fill:"#E6F1FB",stroke:"#185FA5",tc:"#0C447C",fs:"12"},
-      l3:        {x:20, y:226,w:150,h:50,label:"Rate limiting",  sub:"Layer 3 · rate+quota",fill:"#E6F1FB",stroke:"#185FA5",tc:"#0C447C",fs:"12"},
-      l4:        {x:20, y:284,w:150,h:50,label:"Origin check",   sub:"Layer 4 · code-level",fill:"#E1F5EE",stroke:"#0F6E56",tc:"#085041",fs:"12"},
+      l1:        {x:20, y:130,w:150,h:50,label:"CORS policy",   sub:"Layer 1 · allow-listed origin", fill:"#E6F1FB",stroke:"#185FA5",tc:"#0C447C",fs:"12"},
+      l2:        {x:20, y:188,w:150,h:50,label:"Rate limiting", sub:"Layer 2 · rate+quota",          fill:"#E6F1FB",stroke:"#185FA5",tc:"#0C447C",fs:"12"},
+      l3:        {x:20, y:246,w:150,h:50,label:"IAM auth",      sub:"Layer 3 · Function URL",        fill:"#E1F5EE",stroke:"#0F6E56",tc:"#085041",fs:"12"},
       browser:   {x:285,y:20, w:120,h:44,label:"Browser",     sub:"",fill:"#F1EFE8",stroke:"#5F5E5A",tc:"#2C2C2A"},
       apiGw:     {x:285,y:130,w:120,h:44,label:"API Gateway", sub:"",fill:"#E6F1FB",stroke:"#185FA5",tc:"#0C447C"},
       lambda:    {x:285,y:250,w:120,h:44,label:"Lambda",      sub:"",fill:"#E1F5EE",stroke:"#0F6E56",tc:"#085041"},
@@ -314,11 +313,10 @@ function initSecurityGraph(c) {
       {id:"e3",from:"lambda", fromSide:"bottom",to:"bedrock",toSide:"top", label:"IAM auth",  dashed:false,bidir:true},
       {id:"l1",from:"l1",fromSide:"right",to:"apiGw", toSide:"left",label:"",noArrow:true},
       {id:"l2",from:"l2",fromSide:"right",to:"apiGw", toSide:"left",label:"",noArrow:true},
-      {id:"l3",from:"l3",fromSide:"right",to:"apiGw", toSide:"left",label:"",noArrow:true},
-      {id:"l4",from:"l4",fromSide:"right",to:"lambda",toSide:"left",label:"",noArrow:true},
+      {id:"l3",from:"l3",fromSide:"right",to:"lambda",toSide:"left",label:"",noArrow:true},
       {id:"s1",from:"lambda",fromSide:"right",to:"cloudwatch",toSide:"left",label:"",dashed:false,color:"#a0782a"},
     ],
-    viewBox:"0 0 680 430",
+    viewBox:"0 0 680 420",
     footerHtml:``,
   });
 }
