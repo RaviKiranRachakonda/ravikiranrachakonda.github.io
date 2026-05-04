@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: >
+  portfolio-api
+  AI chat backend using Amazon Bedrock (Claude)
+  API Gateway + Lambda
+
+# ── Parameters ───────────────────────────────────────────────────────────────
+Parameters:
+  AllowedOrigin:
+    Type: String
+    Default: "https://ravikiranrachakonda.github.io"
+    Description: CORS allowed origin (your GitHub Pages URL)
+
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [prod, dev]
+
+# ── Globals ───────────────────────────────────────────────────────────────────
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 256
+    Runtime: python3.12
+    Environment:
+      Variables:
+        ALLOWED_ORIGIN: !Ref AllowedOrigin
+        POWERTOOLS_SERVICE_NAME: portfolio-api
+        LOG_LEVEL: INFO
+        MODEL_ID: us.anthropic.claude-haiku-4-5-20251001-v1:0
+
+# ── Resources ─────────────────────────────────────────────────────────────────
+Resources:
+
+  # ── API Gateway ─────────────────────────────────────────────────────────────
+  PortfolioApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub portfolio-api-${Environment}
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'POST, OPTIONS'"
+        AllowHeaders: "'Content-Type'"
+        AllowOrigin: !Sub "'${AllowedOrigin}'"
+      Auth:
+        ResourcePolicy:
+          CustomStatements:
+            - Effect: Allow
+              Principal: "*"
+              Action: execute-api:Invoke
+              Resource: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*/*"
+              Condition:
+                StringLike:
+                  aws:Referer: "https://ravikiranrachakonda.github.io/*"
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          ThrottlingBurstLimit: 20
+          ThrottlingRateLimit: 10
+
+  # ── Lambda Function ──────────────────────────────────────────────────────────
+  ChatFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub portfolio-chat-${Environment}
+      CodeUri: ../lambda/
+      Handler: handler.handler
+      Description: Proxies chat requests to Amazon Bedrock (Claude)
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+          - Effect: Allow
+            Action:
+              - bedrock:InvokeModel
+            Resource:
+              - "arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+              - "arn:aws:bedrock:*:*:inference-profile/*"
+        - Statement:
+          - Effect: Allow
+            Action:
+              - aws-marketplace:ViewSubscriptions
+              - aws-marketplace:Subscribe
+            Resource: "*"
+
+      Events:
+        ChatPost:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PortfolioApi
+            Path: /chat
+            Method: POST
+        ChatOptions:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PortfolioApi
+            Path: /chat
+            Method: OPTIONS
+
+  # ── Lambda Function URL (IAM auth — for integration testing from Mac) ────────
+  # Bypasses API Gateway entirely. Only callers with a valid IAM SigV4
+  # signature are allowed. Used exclusively by integration_test.py.
+  ChatFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      AuthType: AWS_IAM
+      TargetFunctionArn: !GetAtt ChatFunction.Arn
+
+  # Allow any IAM principal in this account to invoke via the Function URL.
+  # AWS_IAM auth enforces that the caller must sign with valid credentials —
+  # this permission does NOT open it to anonymous callers.
+  ChatFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunctionUrl
+      FunctionName: !Ref ChatFunction
+      Principal: !Sub "${AWS::AccountId}"
+      FunctionUrlAuthType: AWS_IAM
+
+  # ── CloudWatch Log Groups ────────────────────────────────────────────────────
+  ChatFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/portfolio-chat-${Environment}
+      RetentionInDays: 14
+
+  # ⚠️  ApiAccessLogGroup will cause a CREATE_FAILED error unless you first
+  # set a CloudWatch role ARN in your API Gateway account settings.
+  # Run this once to fix it:
+  #   aws apigateway update-account \
+  #     --patch-operations op=replace,path=/cloudwatchRoleArn,value=<ROLE_ARN>
+  # Or simply delete this resource and the AccessLogSetting above to skip logging.
+  #
+  # ApiAccessLogGroup:
+  #   Type: AWS::Logs::LogGroup
+  #   Properties:
+  #     LogGroupName: !Sub /aws/apigateway/portfolio-api-${Environment}
+  #     RetentionInDays: 14
+
+# ── Outputs ───────────────────────────────────────────────────────────────────
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint — paste into CONFIG.API_ENDPOINT in main.js"
+    Value: !Sub "https://${PortfolioApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/chat"
+    Export:
+      Name: !Sub portfolio-api-endpoint-${Environment}
+
+  FunctionUrl:
+    Description: "Lambda Function URL — for integration testing (IAM auth required)"
+    Value: !GetAtt ChatFunctionUrl.FunctionUrl
+    Export:
+      Name: !Sub portfolio-function-url-${Environment}
+
+  ChatFunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt ChatFunction.Arn
