@@ -34,12 +34,40 @@ EDUCATION: ${PROFILE.education.degree}, ${PROFILE.education.school} (${PROFILE.e
 CONTACT: email: ${PROFILE.email} | phone: ${PROFILE.phone} | linkedin: ${PROFILE.linkedin}`;
   }
 
+  function renderMarkdown(text) {
+    return text
+      // Bold
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      // Italic
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      // Code inline
+      .replace(/`([^`]+)`/g, '<code style="background:#e8e4dc;padding:1px 5px;border-radius:3px;font-size:12px;font-family:\'DM Mono\',monospace;">$1</code>')
+      // Numbered lists — match lines starting with "1. " etc
+      .replace(/^\d+\.\s+(.*)$/gm, '<li style="margin:3px 0;">$1</li>')
+      // Bullet lists — •, -, *
+      .replace(/^[•\-\*]\s+(.*)$/gm, '<li style="margin:3px 0;">$1</li>')
+      // Wrap consecutive <li> items in <ul>
+      .replace(/(<li[^>]*>.*<\/li>\n?)+/g, m =>
+        `<ul style="margin:6px 0;padding-left:18px;">${m}</ul>`)
+      // Line breaks — double newline = paragraph break
+      .replace(/\n\n/g, '</p><p style="margin:6px 0;">')
+      // Single newline = <br>
+      .replace(/\n/g, '<br>')
+      // Wrap in paragraph if not already wrapped
+      .replace(/^(?!<)/, '<p style="margin:0">')
+      .replace(/(?<!>)$/, '</p>');
+  }
+
   function appendMessage(role, text) {
     const wrap=document.createElement("div");
     wrap.style.cssText=`display:flex;justify-content:${role==="user"?"flex-end":"flex-start"};margin-bottom:10px;`;
     const bubble=document.createElement("div");
-    bubble.style.cssText=`max-width:78%;padding:9px 13px;border-radius:${role==="user"?"14px 14px 3px 14px":"14px 14px 14px 3px"};font-size:13px;line-height:1.6;background:${role==="user"?"#a0782a":"#f0ede8"};color:${role==="user"?"#fff":"#1a1816"};font-family:'DM Sans',sans-serif;`;
-    bubble.textContent=text;
+    bubble.style.cssText=`max-width:78%;padding:9px 13px;border-radius:${role==="user"?"14px 14px 3px 14px":"14px 14px 14px 3px"};font-size:13px;line-height:1.65;background:${role==="user"?"#a0782a":"#f0ede8"};color:${role==="user"?"#fff":"#1a1816"};font-family:'DM Sans',sans-serif;`;
+    if (role === 'assistant') {
+      bubble.innerHTML = renderMarkdown(text);
+    } else {
+      bubble.textContent = text; // user messages stay plain
+    }
     wrap.appendChild(bubble); messagesEl.appendChild(wrap);
     messagesEl.scrollTop=messagesEl.scrollHeight;
   }
