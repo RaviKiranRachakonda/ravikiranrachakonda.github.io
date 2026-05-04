@@ -6,435 +6,11 @@
   <title>Ravi Rachakonda</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #ffffff;
-      --surface: #f5f4f2;
-      --border: #e5e2de;
-      --text: #1a1816;
-      --muted: #7a7470;
-      --accent: #a0782a;
-      --accent-dim: rgba(200, 169, 110, 0.12);
-      --mono: 'DM Mono', monospace;
-      --serif: 'DM Serif Display', serif;
-      --sans: 'DM Sans', sans-serif;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-weight: 300;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-
-    /* Grain texture overlay */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
-    }
-
-    /* Nav */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 3rem;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(12px);
-    }
-
-    .nav-logo {
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--accent);
-      letter-spacing: 0.08em;
-      text-decoration: none;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      text-decoration: none;
-      letter-spacing: 0.06em;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--text); }
-
-    /* Hero */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding: 8rem 3rem 4rem;
-      position: relative;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      max-width: 1100px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .hero-left { display: flex; flex-direction: column; justify-content: center; }
-
-    .hero-tag {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.1s forwards;
-    }
-
-    .hero-name {
-      font-family: var(--serif);
-      font-size: clamp(3rem, 5vw, 5rem);
-      line-height: 1.05;
-      letter-spacing: -0.01em;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.2s forwards;
-    }
-
-    .hero-name em {
-      font-style: italic;
-      color: var(--accent);
-    }
-
-    .hero-desc {
-      font-size: 16px;
-      color: var(--muted);
-      line-height: 1.8;
-      max-width: 480px;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.3s forwards;
-    }
-
-    .hero-links {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.4s forwards;
-    }
-
-    .btn {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      padding: 0.65rem 1.4rem;
-      border-radius: 2px;
-      text-decoration: none;
-      transition: all 0.2s;
-      display: inline-block;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0a0a0a;
-      font-weight: 500;
-    }
-
-    .btn-primary:hover { background: #d4b87a; }
-
-    .btn-ghost {
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-
-    .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
-
-    .hero-right {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 1px;
-      opacity: 0;
-      animation: fadeIn 0.8s 0.5s forwards;
-    }
-
-    .stat-row {
-      display: flex;
-      align-items: baseline;
-      gap: 1rem;
-      padding: 1.25rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .stat-row:first-child { border-top: 1px solid var(--border); }
-
-    .stat-num {
-      font-family: var(--serif);
-      font-size: 2.5rem;
-      color: var(--accent);
-      min-width: 80px;
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      line-height: 1.5;
-    }
-
-    /* Sections */
-    section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 6rem 3rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .section-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 3rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    .section-title {
-      font-family: var(--serif);
-      font-size: clamp(2rem, 3vw, 3rem);
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-    }
-
-    /* Experience */
-    .exp-list { display: flex; flex-direction: column; gap: 0; }
-
-    .exp-item {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 2rem;
-      padding: 2rem 0;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.2s;
-    }
-
-    .exp-item:last-child { border-bottom: none; }
-
-    .exp-meta { padding-top: 2px; }
-
-    .exp-date {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      margin-bottom: 0.5rem;
-    }
-
-    .exp-company {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--accent);
-    }
-
-    .exp-title {
-      font-size: 17px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-      line-height: 1.3;
-    }
-
-    .exp-desc {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.75;
-    }
-
-    .exp-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 1rem;
-    }
-
-    .tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.05em;
-      padding: 3px 8px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      border-radius: 1px;
-    }
-
-    /* Patents */
-    .patent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
-
-    .patent-card {
-      background: var(--bg);
-      padding: 2rem;
-      transition: background 0.2s;
-    }
-
-    .patent-card:hover { background: var(--surface); }
-
-    .patent-num {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-      letter-spacing: 0.05em;
-    }
-
-    .patent-title {
-      font-size: 15px;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      line-height: 1.4;
-    }
-
-    .patent-date {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    /* Skills */
-    .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-
-    .skill-group-title {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--accent);
-      letter-spacing: 0.08em;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-    }
-
-    .skill-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
-    .skill-pill {
-      font-family: var(--mono);
-      font-size: 11px;
-      padding: 5px 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 1px;
-    }
-
-    /* Contact */
-    .contact-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
-    }
-
-    .contact-desc {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
-
-    .contact-link {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-family: var(--mono);
-      font-size: 13px;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 1rem;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      transition: all 0.2s;
-    }
-
-    .contact-link:hover { border-color: var(--accent); color: var(--text); }
-
-    .contact-link-label { font-size: 11px; color: var(--accent); letter-spacing: 0.06em; display: block; margin-bottom: 2px; text-transform: uppercase; }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 2rem 3rem;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-    }
-
-    /* Animations */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { display: none; }
-      .hero { padding: 7rem 1.5rem 3rem; }
-      .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
-      section { padding: 4rem 1.5rem; }
-      .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
-      .patent-grid { grid-template-columns: 1fr; }
-      .skills-grid { grid-template-columns: 1fr; }
-      .contact-wrap { grid-template-columns: 1fr; gap: 2rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
+  <!-- Nav -->
   <nav>
     <a href="#" class="nav-logo">rr /</a>
     <ul class="nav-links">
@@ -452,7 +28,9 @@
         <p class="hero-tag">// Staff Machine Learning Engineer</p>
         <h1 class="hero-name">Ravi<br><em>Rachakonda</em></h1>
         <p class="hero-desc">
-          17+ years building systems at scale — from founding Amazon Alexa to leading data infrastructure for Amazon Nova foundation models. I work at the intersection of ML research, distributed systems, and org-wide technical strategy.
+          17+ years building systems at scale — from founding Amazon Alexa to leading data infrastructure
+          for Amazon Nova foundation models. I work at the intersection of ML research, distributed systems,
+          and org-wide technical strategy.
         </p>
         <div class="hero-links">
           <a href="https://linkedin.com/in/ravi-rachakonda-91a56024" class="btn btn-primary" target="_blank">LinkedIn</a>
@@ -460,6 +38,7 @@
           <a href="mailto:ravikiran2508@gmail.com" class="btn btn-ghost">Email</a>
           <a href="RaviRachakonda_Resume.pdf" class="btn btn-ghost" download>↓ Resume</a>
           <a href="#terminal" class="btn btn-ghost" onclick="document.getElementById('term-input').focus()">⌘ Interact</a>
+          <button class="btn btn-ghost" id="arch-btn">⬡ Under the Hood</button>
         </div>
       </div>
       <div class="hero-right">
@@ -495,12 +74,10 @@
         </div>
         <div>
           <div class="exp-title">Senior ML Engineer, AGI Data Scaling</div>
-          <div class="exp-desc">Cross-org tech lead setting data infrastructure strategy for Amazon Nova foundation models and the Nova Forge platform — the standard data preparation platform for foundation model customization across internal and enterprise teams.</div>
+          <div class="exp-desc">Cross-org tech lead setting data infrastructure strategy for Amazon Nova foundation models and the Nova Forge platform (aws.amazon.com/nova/forge/) — the standard data preparation platform for foundation model customization across internal and enterprise teams.</div>
           <div class="exp-tags">
-            <span class="tag">Nova Forge SDK</span>
-            <span class="tag">Ray on HyperPod</span>
-            <span class="tag">Foundation Models</span>
-            <span class="tag">Data Infrastructure</span>
+            <span class="tag">Nova Forge SDK</span><span class="tag">Ray on HyperPod</span>
+            <span class="tag">Foundation Models</span><span class="tag">Data Infrastructure</span>
           </div>
         </div>
       </div>
@@ -511,14 +88,11 @@
           <div class="exp-company">Amazon AGI</div>
         </div>
         <div>
-          <div class="exp-title">Senior Research Engineer, Nova Pre & Post Training</div>
+          <div class="exp-title">Senior Research Engineer, Nova Pre &amp; Post Training</div>
           <div class="exp-desc">Cross-org technical lead across pre-training, data infrastructure, and evaluations orgs for Amazon Nova — Amazon's flagship family of foundation models. Drove org-wide adoption of NVIDIA NeMo 2.0, MegatronCore, and MegatronEnergon.</div>
           <div class="exp-tags">
-            <span class="tag">NeMo 2.0</span>
-            <span class="tag">MegatronCore</span>
-            <span class="tag">Multimodal LLMs</span>
-            <span class="tag">Diffusion Transformers</span>
-            <span class="tag">Triton Inference</span>
+            <span class="tag">NeMo 2.0</span><span class="tag">MegatronCore</span>
+            <span class="tag">Multimodal LLMs</span><span class="tag">Diffusion Transformers</span><span class="tag">Triton Inference</span>
           </div>
         </div>
       </div>
@@ -529,14 +103,11 @@
           <div class="exp-company">Amazon</div>
         </div>
         <div>
-          <div class="exp-title">Senior SWE / Tech Lead, FireTV Background & Creative AI</div>
+          <div class="exp-title">Senior SWE / Tech Lead, FireTV Background &amp; Creative AI</div>
           <div class="exp-desc">Founded the Image Generation initiative across two org boundaries. Delivered the model productized as Amazon Bedrock's Titan Image Generation (Nova) — now in production. Founded Creative AI for Amazon Kids, ranked top 3 at launch.</div>
           <div class="exp-tags">
-            <span class="tag">Image Generation</span>
-            <span class="tag">Amazon Bedrock</span>
-            <span class="tag">SageMaker</span>
-            <span class="tag">MLOps</span>
-            <span class="tag">CI/CD</span>
+            <span class="tag">Image Generation</span><span class="tag">Amazon Bedrock</span>
+            <span class="tag">SageMaker</span><span class="tag">MLOps</span><span class="tag">CI/CD</span>
           </div>
         </div>
       </div>
@@ -548,43 +119,52 @@
         </div>
         <div>
           <div class="exp-title">Senior SWE / Tech Lead, Alexa Astro</div>
-          <div class="exp-desc">Founded and led the Personality program for Amazon Astro — Amazon's first consumer home robot — defining the technical vision for expressive robot behavior from the ground up and shipping to initial customers.</div>
+          <div class="exp-desc">Founded and led the Personality program for Amazon Astro — Amazon's first consumer home robot — defining the technical vision for expressive robot behavior and shipping to initial customers.</div>
           <div class="exp-tags">
-            <span class="tag">Robotics</span>
-            <span class="tag">Personality AI</span>
-            <span class="tag">0→1</span>
+            <span class="tag">Robotics</span><span class="tag">Personality AI</span><span class="tag">0→1</span>
           </div>
         </div>
       </div>
 
       <div class="exp-item">
         <div class="exp-meta">
-          <div class="exp-date">2012 – 2018</div>
+          <div class="exp-date">Sep 2012 – Aug 2018</div>
           <div class="exp-company">Amazon Lab126</div>
         </div>
         <div>
           <div class="exp-title">SDE / Tech Lead, Alexa Platform</div>
-          <div class="exp-desc">Founding engineer on Amazon Alexa. Tech lead across Weather, Sports, Movies, Notifications, and Echo Spatial Perception verticals. Built and scaled platform services to 10,000+ TPS at 99.9% availability for millions of users worldwide.</div>
+          <div class="exp-desc">Founding engineer on Amazon Alexa. Tech lead across Weather, Sports, Movies, Notifications, and Echo Spatial Perception verticals. Scaled platform to 10,000+ TPS at 99.9% availability. Co-authored 3 granted US patents.</div>
           <div class="exp-tags">
-            <span class="tag">Alexa</span>
-            <span class="tag">Voice AI</span>
-            <span class="tag">Distributed Systems</span>
-            <span class="tag">Patents</span>
+            <span class="tag">Alexa</span><span class="tag">Voice AI</span>
+            <span class="tag">Distributed Systems</span><span class="tag">Patents</span>
           </div>
         </div>
       </div>
 
       <div class="exp-item">
         <div class="exp-meta">
-          <div class="exp-date">2009 – 2012</div>
+          <div class="exp-date">Jul 2009 – Aug 2012</div>
           <div class="exp-company">Amazon.com</div>
         </div>
         <div>
           <div class="exp-title">Software Development Engineer</div>
           <div class="exp-desc">Built core Amazon Prime data processing pipelines and contributed to international Prime launches across Spain and Germany.</div>
           <div class="exp-tags">
-            <span class="tag">Amazon Prime</span>
-            <span class="tag">Data Pipelines</span>
+            <span class="tag">Amazon Prime</span><span class="tag">Data Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">Jul 2007 – Jul 2009</div>
+          <div class="exp-company">Sapient</div>
+        </div>
+        <div>
+          <div class="exp-title">Associate Software Engineer</div>
+          <div class="exp-desc">Worked on software development projects across client engagements, building foundational engineering skills.</div>
+          <div class="exp-tags">
+            <span class="tag">Software Engineering</span>
           </div>
         </div>
       </div>
@@ -619,49 +199,36 @@
     <div class="section-label">Skills</div>
     <div class="skills-grid">
       <div>
-        <div class="skill-group-title">ML & AI</div>
+        <div class="skill-group-title">ML &amp; AI</div>
         <div class="skill-pills">
-          <span class="skill-pill">PyTorch</span>
-          <span class="skill-pill">NVIDIA NeMo 2.0</span>
-          <span class="skill-pill">MegatronCore</span>
-          <span class="skill-pill">MegatronLM</span>
-          <span class="skill-pill">Triton Inference Server</span>
-          <span class="skill-pill">Diffusion Transformers</span>
+          <span class="skill-pill">PyTorch</span><span class="skill-pill">NVIDIA NeMo 2.0</span>
+          <span class="skill-pill">MegatronCore</span><span class="skill-pill">MegatronLM</span>
+          <span class="skill-pill">Triton Inference Server</span><span class="skill-pill">Diffusion Transformers</span>
           <span class="skill-pill">Multimodal LLMs</span>
         </div>
       </div>
       <div>
-        <div class="skill-group-title">Distributed & MLOps</div>
+        <div class="skill-group-title">Distributed &amp; MLOps</div>
         <div class="skill-pills">
-          <span class="skill-pill">Ray</span>
-          <span class="skill-pill">Apache Spark</span>
-          <span class="skill-pill">SageMaker HyperPod</span>
-          <span class="skill-pill">AWS Batch</span>
-          <span class="skill-pill">Distributed Training</span>
-          <span class="skill-pill">Fault-Tolerant Pipelines</span>
+          <span class="skill-pill">Ray</span><span class="skill-pill">Apache Spark</span>
+          <span class="skill-pill">SageMaker HyperPod</span><span class="skill-pill">AWS Batch</span>
+          <span class="skill-pill">Distributed Training</span><span class="skill-pill">Fault-Tolerant Pipelines</span>
         </div>
       </div>
       <div>
-        <div class="skill-group-title">Cloud & Infrastructure</div>
+        <div class="skill-group-title">Cloud &amp; Infrastructure</div>
         <div class="skill-pills">
-          <span class="skill-pill">SageMaker</span>
-          <span class="skill-pill">ECR</span>
-          <span class="skill-pill">S3</span>
-          <span class="skill-pill">Lambda</span>
-          <span class="skill-pill">DynamoDB</span>
-          <span class="skill-pill">EC2</span>
-          <span class="skill-pill">CloudWatch</span>
-          <span class="skill-pill">CI/CD</span>
+          <span class="skill-pill">SageMaker</span><span class="skill-pill">ECR</span>
+          <span class="skill-pill">S3</span><span class="skill-pill">Lambda</span>
+          <span class="skill-pill">DynamoDB</span><span class="skill-pill">EC2</span>
+          <span class="skill-pill">CloudWatch</span><span class="skill-pill">CI/CD</span>
         </div>
       </div>
       <div>
         <div class="skill-group-title">Languages</div>
         <div class="skill-pills">
-          <span class="skill-pill">Python</span>
-          <span class="skill-pill">Java</span>
-          <span class="skill-pill">JavaScript</span>
-          <span class="skill-pill">C++</span>
-          <span class="skill-pill">Shell</span>
+          <span class="skill-pill">Python</span><span class="skill-pill">Java</span>
+          <span class="skill-pill">JavaScript</span><span class="skill-pill">C++</span><span class="skill-pill">Shell</span>
         </div>
       </div>
     </div>
@@ -677,42 +244,30 @@
       </div>
       <div class="contact-links">
         <a href="mailto:ravikiran2508@gmail.com" class="contact-link">
-          <div>
-            <span class="contact-link-label">Email</span>
-            ravikiran2508@gmail.com
-          </div>
+          <div><span class="contact-link-label">Email</span>ravikiran2508@gmail.com</div>
         </a>
         <a href="https://linkedin.com/in/ravi-rachakonda-91a56024" class="contact-link" target="_blank">
-          <div>
-            <span class="contact-link-label">LinkedIn</span>
-            ravi-rachakonda-91a56024
-          </div>
+          <div><span class="contact-link-label">LinkedIn</span>ravi-rachakonda-91a56024</div>
         </a>
         <a href="https://github.com/ravikiranrachakonda" class="contact-link" target="_blank">
-          <div>
-            <span class="contact-link-label">GitHub</span>
-            github.com/ravikiranrachakonda
-          </div>
+          <div><span class="contact-link-label">GitHub</span>github.com/ravikiranrachakonda</div>
         </a>
       </div>
     </div>
   </section>
 
   <!-- Terminal -->
-  <section id="terminal" style="max-width:1100px;margin:0 auto;padding:4rem 3rem;">
+  <section id="terminal">
     <div class="section-label">Interactive</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;font-family:var(--sans);">Explore my profile through a terminal. Click an option or type a number.</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;">Explore the profile through a terminal. Click an option or type a number.</p>
     <div id="term-wrap" style="background:#1a1816;border-radius:6px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);border:1px solid var(--border);">
-      <!-- Title bar -->
       <div style="background:#2e2a26;padding:10px 16px;display:flex;align-items:center;gap:8px;">
         <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
         <span style="width:12px;height:12px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
         <span style="width:12px;height:12px;border-radius:50%;background:#28c840;display:inline-block;"></span>
         <span style="font-family:'DM Mono',monospace;font-size:11px;color:#6b6760;margin-left:8px;">ravi@portfolio ~ %</span>
       </div>
-      <!-- Output -->
       <div id="term-output" style="padding:20px 24px;min-height:280px;max-height:420px;overflow-y:auto;font-family:'DM Mono',monospace;font-size:13px;line-height:1.8;color:#e8e4dc;"></div>
-      <!-- Input row -->
       <div style="display:flex;align-items:center;padding:10px 24px 16px;border-top:1px solid #2e2a26;">
         <span style="color:#a0782a;font-family:'DM Mono',monospace;font-size:13px;margin-right:8px;">›</span>
         <input id="term-input" type="text" autocomplete="off" spellcheck="false"
@@ -722,194 +277,46 @@
     </div>
   </section>
 
+  <!-- Architecture Modal -->
+  <div id="arch-overlay" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;max-width:880px;width:92%;max-height:88vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,0.2);font-family:'DM Sans',sans-serif;">
+
+      <div style="background:#1a1816;padding:16px 24px;border-radius:12px 12px 0 0;">
+        <div style="font-size:15px;font-weight:500;color:#e8e4dc;margin-bottom:4px;">Built it to show it.</div>
+        <div style="font-size:12px;color:#6b6760;line-height:1.6;font-family:'DM Mono',monospace;">The chat assistant on this site is a purpose-built AI system — AWS Lambda + API Gateway + AWS Bedrock (Claude) — designed as a live demonstration of the engineering skills described above. Auth via IAM. Not a third-party widget.</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-bottom:1px solid #e5e2de;flex-wrap:wrap;gap:8px;background:#fff;">
+        <div style="font-size:12px;color:#6b6760;font-family:'DM Mono',monospace;">under the hood</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button id="arch-tab-chat"     onclick="showTab('chat')">AI Chat Flow</button>
+          <button id="arch-tab-full"     onclick="showTab('full')">Full Architecture</button>
+          <button id="arch-tab-security" onclick="showTab('security')">Security Layers</button>
+          <button id="arch-close" onclick="closeArch()" style="border:none;background:none;font-size:18px;cursor:pointer;color:#6b6760;padding:4px 8px;">✕</button>
+        </div>
+      </div>
+
+      <div id="arch-content" style="padding:24px;"></div>
+
+      <div style="padding:14px 24px;border-top:1px solid #e5e2de;display:flex;gap:20px;flex-wrap:wrap;background:#faf9f7;border-radius:0 0 12px 12px;">
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b6760;"><span style="width:12px;height:12px;border-radius:2px;background:#1a1816;display:inline-block;"></span>Client</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b6760;"><span style="width:12px;height:12px;border-radius:2px;background:#a0782a;display:inline-block;"></span>AWS</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b6760;"><span style="width:12px;height:12px;border-radius:2px;background:#2d6a4f;display:inline-block;"></span>Anthropic</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b6760;"><span style="width:12px;height:12px;border-radius:2px;background:#4a6fa5;display:inline-block;"></span>GitHub Pages</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:#6b6760;"><span style="width:10px;height:1px;border-top:2px dashed #6b6760;display:inline-block;"></span>Planned</span>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <p>© 2026 Ravi Rachakonda · San Jose, CA</p>
   </footer>
 
-<script>
-const output = document.getElementById('term-output');
-const input = document.getElementById('term-input');
+  <!-- ── Scripts (order matters) ─────────────────────────────────────────── -->
+  <script src="data/profile.js"></script>   <!-- PROFILE object — source of truth -->
+  <script src="js/terminal.js"></script>     <!-- Terminal widget -->
+  <script src="js/chat.js"></script>         <!-- AI chat widget -->
+  <script src="js/main.js"></script>         <!-- Config, Audio, Arch modal, Init -->
 
-const GOLD = '#c8a96e';
-const MUTED = '#6b6760';
-const WHITE = '#e8e4dc';
-const GREEN = '#28c840';
-
-const experiences = [
-  {
-    id: 1,
-    short: "Sr. ML Engineer, AGI Data Scaling — Amazon AGI (Jan 2026–Present)",
-    detail: [
-      "Cross-org tech lead setting data infrastructure strategy for Amazon Nova foundation models and the Nova Forge platform.",
-      "Architected the standard data preparation platform (Nova Forge SDK) for foundation model customization — adopted across 100+ internal and enterprise teams.",
-      "Leading strategic migration of customers from manual data prep to Nova Forge's managed platform.",
-      "Serving as technical bridge between enterprise customers and internal platform teams.",
-    ]
-  },
-  {
-    id: 2,
-    short: "Sr. Research Engineer, Nova Pre & Post Training — Amazon AGI (2024–Jan 2026)",
-    detail: [
-      "Cross-org technical lead across pre-training, data infrastructure, and evaluations orgs for Amazon Nova.",
-      "Led org-wide multimodal (vision) pre-training strategy — defined training protocols adopted org-wide.",
-      "Drove org-wide adoption of NVIDIA NeMo 2.0, MegatronCore, and MegatronEnergon — without direct authority.",
-      "Reduced training cluster MTTR by 13x (40 min → 3 min) by redesigning Energon dataloader.",
-      "Designed real-time Avatar demo at AWS re:Invent 2024 using NVIDIA Triton Inference Server.",
-    ]
-  },
-  {
-    id: 3,
-    short: "Sr. SWE / Tech Lead, FireTV Background & Creative AI — Amazon (2022–2024)",
-    detail: [
-      "Founded the Image Generation initiative across two org boundaries (Alexa AI + FireTV).",
-      "Delivered the model productized as Amazon Bedrock's Titan Image Generation (Nova) — 1M+ images/month in production.",
-      "Founded Creative AI for Amazon Kids — ranked top 3 among all Amazon Kids Alexa skills at launch.",
-      "Defined end-to-end MLOps pipeline (CodeCommit, ECR, S3, SageMaker) with fully automated CI/CD.",
-    ]
-  },
-  {
-    id: 4,
-    short: "Sr. SWE / Tech Lead, Alexa Astro — Amazon Lab126 (2018–2021)",
-    detail: [
-      "Founded and led the Personality program for Amazon Astro — Amazon's first consumer home robot.",
-      "Defined technical vision for expressive robot behavior; shipped to initial customers.",
-      "Set architecture patterns adopted across the entire Astro org.",
-    ]
-  },
-  {
-    id: 5,
-    short: "SDE / Tech Lead, Alexa Platform — Amazon Lab126 (2012–2018)",
-    detail: [
-      "Founding engineer on Amazon Alexa — one of the earliest engineers on the platform.",
-      "Tech lead for Echo Spatial Perception, Notifications, Movies & Showtimes, Local Search, Sports Q&A.",
-      "Scaled Alexa platform to 10,000+ TPS at 99.9% availability for millions of users worldwide.",
-      "Co-authored 3 granted US patents including Echo Spatial Perception.",
-    ]
-  },
-  {
-    id: 6,
-    short: "Software Development Engineer — Amazon.com, Bangalore (2009–2012)",
-    detail: [
-      "Built core Amazon Prime data processing pipeline.",
-      "Contributed to international Prime launches: Amazon Prime Spain, Amazon Mom Spain, Prime Student Germany.",
-    ]
-  },
-];
-
-let state = 'main';
-let prevState = null;
-
-function print(html, marginTop) {
-  const div = document.createElement('div');
-  if (marginTop) div.style.marginTop = marginTop;
-  div.innerHTML = html;
-  output.appendChild(div);
-  output.scrollTop = output.scrollHeight;
-}
-
-function line(text, color) {
-  return `<span style="color:${color||WHITE}">${text}</span>`;
-}
-
-function printMainMenu() {
-  print(`<br><span style="color:${GOLD};font-weight:bold;">Hi! I'm Ravi's portfolio terminal.</span>`);
-  print(`<span style="color:${MUTED}">What would you like to explore?</span><br>`);
-  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">1</span>  Experience</span>`);
-  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">2</span>  Phone</span>`);
-  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">3</span>  Email</span>`);
-  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">4</span>  Skills</span>`);
-  print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">5</span>  Patents</span>`);
-  print(`<br><span style="color:${MUTED}">Type a number or click an option above.</span>`);
-  state = 'main';
-}
-
-function printExperienceMenu() {
-  print(`<br><span style="color:${GOLD};font-weight:bold;">Experience</span> <span style="color:${MUTED}">— choose a role to learn more:</span><br>`);
-  experiences.forEach(exp => {
-    print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">${exp.id}</span>  ${exp.short}</span>`);
-  });
-  print(`<br><span style="color:${MUTED}">  <span style="color:${GOLD}">0</span>  ← Back to main menu</span>`);
-  state = 'experience';
-}
-
-function printExperienceDetail(id) {
-  const exp = experiences.find(e => e.id === id);
-  if (!exp) { print(`<span style="color:#ff5f57">Not found. Try again.</span>`); return; }
-  print(`<br><span style="color:${GOLD};font-weight:bold;">${exp.short}</span><br>`);
-  exp.detail.forEach(d => {
-    print(`<span style="color:${WHITE}">  • ${d}</span>`);
-  });
-  print(`<br><span style="color:${MUTED}">  <span style="color:${GOLD}">0</span>  ← Back to experience list &nbsp;|&nbsp; <span style="color:${GOLD}">m</span>  ← Main menu</span>`);
-  state = 'exp_detail';
-  prevState = 'experience';
-}
-
-function handleInput(val) {
-  val = val.trim().toLowerCase();
-  if (!val) return;
-  print(`<span style="color:${MUTED}">› ${val}</span>`);
-
-  if (val === 'm' || val === 'menu' || val === 'main') { printMainMenu(); return; }
-  if (val === 'clear' || val === 'cls') { output.innerHTML = ''; printMainMenu(); return; }
-
-  if (state === 'main') {
-    if (val === '1') { printExperienceMenu(); }
-    else if (val === '2') { print(`<br><span style="color:${WHITE}">📞 <a href="tel:+19046100261" style="color:${GOLD}">+1 (904) 610-0261</a></span>`); print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`); state = 'leaf'; }
-    else if (val === '3') { print(`<br><span style="color:${WHITE}">✉️ <a href="mailto:ravikiran2508@gmail.com" style="color:${GOLD}">ravikiran2508@gmail.com</a></span>`); print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`); state = 'leaf'; }
-    else if (val === '4') {
-      print(`<br><span style="color:${GOLD};font-weight:bold;">Skills</span><br>`);
-      const skills = [
-        ['ML & AI', 'PyTorch, NVIDIA NeMo 2.0, MegatronCore, Triton Inference Server, Diffusion Transformers, Multimodal LLMs'],
-        ['Distributed', 'Ray, Apache Spark, SageMaker HyperPod, AWS Batch, Distributed Training'],
-        ['Cloud & MLOps', 'SageMaker, ECR, S3, Lambda, DynamoDB, EC2, CI/CD'],
-        ['Languages', 'Python, Java, JavaScript, C++, Shell'],
-      ];
-      skills.forEach(([label, val]) => {
-        print(`<span style="color:${WHITE}">  <span style="color:${GOLD}">${label}</span>  ${val}</span>`);
-      });
-      print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`);
-      state = 'leaf';
-    }
-    else if (val === '5') {
-      print(`<br><span style="color:${GOLD};font-weight:bold;">Patents</span><br>`);
-      print(`<span style="color:${WHITE}">  • Context-Based Device Arbitration — #10546583 | #11289087 (March 2022)</span>`);
-      print(`<span style="color:${WHITE}">  • Device Selection from Audio Data — #10685669 (June 2020)</span>`);
-      print(`<br><span style="color:${MUTED}"><span style="color:${GOLD}">m</span> ← Main menu</span>`);
-      state = 'leaf';
-    }
-    else { print(`<span style="color:#ff5f57">Unknown option "${val}". Type 1–5.</span>`); }
-  }
-  else if (state === 'experience') {
-    if (val === '0') { printMainMenu(); }
-    else {
-      const id = parseInt(val);
-      if (id >= 1 && id <= 6) { printExperienceDetail(id); }
-      else { print(`<span style="color:#ff5f57">Type 1–6 to pick a role, or 0 to go back.</span>`); }
-    }
-  }
-  else if (state === 'exp_detail') {
-    if (val === '0') { printExperienceMenu(); }
-    else if (val === 'm') { printMainMenu(); }
-    else { print(`<span style="color:#ff5f57">Type 0 to go back, or m for main menu.</span>`); }
-  }
-  else if (state === 'leaf') {
-    if (val === '0') { printMainMenu(); }
-    else { printMainMenu(); }
-  }
-}
-
-input.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const val = input.value;
-    input.value = '';
-    handleInput(val);
-  }
-});
-
-// Click anywhere in terminal to focus input
-document.getElementById('term-wrap').addEventListener('click', () => input.focus());
-
-// Boot
-printMainMenu();
-</script>
-
+</body>
+</html>
