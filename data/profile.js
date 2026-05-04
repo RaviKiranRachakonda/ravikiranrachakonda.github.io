@@ -11,6 +11,7 @@ const PROFILE = {
   linkedin: "https://linkedin.com/in/ravi-rachakonda-91a56024",
   github: "https://github.com/ravikiranrachakonda",
   website: "https://ravikiranrachakonda.github.io",
+  resume: "https://ravikiranrachakonda.github.io/RaviRachakonda_Resume.pdf",
 
   summary: `Staff Machine Learning Engineer with 17+ years defining org-wide architecture
 and technical strategy across multimodal foundation models, distributed training, and MLOps.

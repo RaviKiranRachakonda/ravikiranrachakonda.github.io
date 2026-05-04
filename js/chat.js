@@ -31,7 +31,7 @@ PATENTS:
 ${patents}
 
 EDUCATION: ${PROFILE.education.degree}, ${PROFILE.education.school} (${PROFILE.education.years})
-CONTACT: email: ${PROFILE.email} | phone: ${PROFILE.phone} | linkedin: ${PROFILE.linkedin}`;
+CONTACT: email: ${PROFILE.email} | phone: ${PROFILE.phone} | linkedin: ${PROFILE.linkedin} | github: ${PROFILE.github} | resume: ${PROFILE.resume} | website: ${PROFILE.website}`;
   }
 
   function renderMarkdown(text) {
