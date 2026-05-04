@@ -6,7 +6,7 @@
  */
 
 const CONFIG = {
-  API_ENDPOINT: "https://YOUR_API_GATEWAY_ID.execute-api.us-east-1.amazonaws.com/prod/chat",
+  API_ENDPOINT: "https://bomamgy5h1.execute-api.us-east-1.amazonaws.com/prod/chat",
 };
 
 document.addEventListener("DOMContentLoaded", () => {
